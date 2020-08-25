@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
   if (interval) {
     clearInterval(interval);
   }
-  interval = setInterval(() => getApiAndEmit(socket), 5000);
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
   socket.on('disconnect', () => {
     const onlineUsers = Object.keys(io.engine.clients);
     io.emit('onlineUsers', JSON.stringify(onlineUsers));
