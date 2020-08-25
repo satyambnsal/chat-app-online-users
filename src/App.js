@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import socketIOClient from 'socket.io-client';
+const ENDPOINT = 'http://127.0.0.1:4001';
 
 function App() {
+  const [response, setResponse] = useState('');
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
+  useEffect(() => {
+    const socket = socketIOClient(ENDPOINT);
+    socket.on('FromAPI', (data) => {
+      setResponse(data);
+    });
+    socket.on('onlineUsers', (message) => {
+      const users = JSON.parse(message);
+      setOnlineUsers(users);
+    });
+    return () => socket.disconnect();
+  }, []);
+  const onlineUsersList = onlineUsers.map((onlineUser) => (
+    <li>{onlineUser}</li>
+  ));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      Its <time dateTime={response}>{response}</time>
+      <ul>{onlineUsersList}</ul>
     </div>
   );
 }
